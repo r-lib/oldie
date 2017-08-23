@@ -16,7 +16,7 @@ is_fn_replacement <- function(...) {
     return(TRUE)
   }
 
-  n_dots == 1 && names2(list(...)) == ""
+  n_dots == 1 && names2(exprs(...)) == ""
 }
 
 deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
@@ -40,31 +40,29 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
 }
 
 deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
-  new <- dots_list(...)
-  if (!every(new, is_string)) {
-    abort("Successors must be strings")
+  args <- exprs(...)
+  if (!every(args, is_symbol)) {
+    abort("Successors must be symbols")
   }
 
-  old <- names2(new)
-  if (any(old == "")) {
+  nms <- names2(args)
+  if (any(nms == "")) {
     abort("Deprecated arguments must be named with their successors")
   }
 
-  new <- flatten_chr(unname(new))
+  args_chr <- map_chr(args, as_string)
   fmls <- fn_fmls(.fn)
   fmls_nms <- names(fmls)
-  if (!all(new %in% fmls_nms)) {
+  if (!all(args_chr %in% fmls_nms)) {
     abort("Can't find successor in function arguments")
   }
-  if (any(old %in% fmls_nms)) {
+  if (any(nms %in% fmls_nms)) {
     abort("Can't add deprecated argument since it already exists in the function")
   }
 
-  compat_fmls <- rep_along(old, list(missing_arg()))
-  compat_fmls <- set_names(compat_fmls, old)
-  fn_fmls(.fn) <- c(fmls, compat_fmls)
+  fn_fmls(.fn) <- c(fmls, args)
 
-  depr_exprs <- map2(old, new, depr_argument_expr, .name, .cycle)
+  depr_exprs <- map2(nms, args_chr, depr_argument_expr, .name, .cycle)
   body(.fn) <- expr({
     !!! depr_exprs
 
