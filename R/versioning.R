@@ -60,7 +60,7 @@ deprecation_level <- function(cycle, pkg_version) {
   max(which(due_levels))
 }
 maybe_promote_deprecation <- function(level) {
-  if (level < 3 && is_true(peek_option("rlang_verbose_deprecation"))) {
+  if (level < 3 && is_true(peek_option("oldie_verbose_deprecation"))) {
     level <- level + 1
   }
 
@@ -122,7 +122,7 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   }
 
   body(.fn) <- expr({
-    rlang::signal_deprecation(!!! data)
+    oldie::signal_deprecation(!!! data)
     !!! body(.fn)
   })
 
