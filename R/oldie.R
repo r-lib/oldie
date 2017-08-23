@@ -1,3 +1,3 @@
 #' @import rlang
-#' @importFrom purrr map map_lgl
+#' @importFrom purrr every map map_lgl map2
 "_PACKAGE"

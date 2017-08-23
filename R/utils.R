@@ -15,3 +15,5 @@ slide <- function(.x, .f, ...) {
 slide_lgl <- function(.x, .f, ...) {
   flatten_lgl(slide(.x, .f, ...))
 }
+
+is_language <- is_lang
