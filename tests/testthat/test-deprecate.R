@@ -1,4 +1,4 @@
-context("versioning")
+context("deprecate")
 
 test_that("can't deprecate function multiple times", {
   foo <- function() "returned"
