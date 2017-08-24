@@ -11,6 +11,10 @@ new_cycle <- function(cycle) {
 
   cycle
 }
+new_cycle_chr <- function(cycle) {
+  map_chr(new_cycle(cycle), as.character)
+}
+
 chr_as_cycle <- function(cycle) {
   if (all(cycle == "")) {
     abort("`cycle` can't be empty")

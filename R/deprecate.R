@@ -70,8 +70,8 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
 
   fn_fmls(.fn) <- c(fmls, args)
 
-  depr_exprs <- map2(nms, args_chr, depr_argument_expr, .name, .cycle)
-  body(.fn) <- expr({
+  depr_exprs <- map2(nms, args_chr, deprecated_arg_expr, .name, .cycle)
+  fn_body(.fn) <- expr({
     !!! depr_exprs
 
     NULL # Work around quasiquotation bug
@@ -79,9 +79,14 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
     !!! body(.fn)
   })
 
+  .cycle <- new_cycle_chr(.cycle)
+  deprecated_args <- map(set_names(args_chr, nms), deprecated_arg, cycle = .cycle)
+  deprecated_args <- c(deprecated_args(.fn), deprecated_args)
+  .fn <- set_attrs(.fn, deprecated_args = deprecated_args)
+
   .fn
 }
-depr_argument_expr <- function(old, new, name, cycle, body) {
+deprecated_arg_expr <- function(old, new, name, cycle, body) {
   old_sym <- sym(old)
   new_sym <- sym(new)
 
@@ -98,7 +103,16 @@ depr_argument_expr <- function(old, new, name, cycle, body) {
     }
   )
 }
+deprecated_arg <- function(successor, cycle) {
+  list(successor = successor, cycle = cycle)
+}
 
 is_deprecated <- function(x) {
   is_true(attr(x, "deprecated"))
+}
+has_deprecated_args <- function(x) {
+  length(deprecated_args(x))
+}
+deprecated_args <- function(x) {
+  attr(x, "deprecated_args")
 }

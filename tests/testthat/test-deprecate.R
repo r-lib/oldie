@@ -55,3 +55,19 @@ test_that("no reassignment when new argument has not been declared", {
   expect_error(foo(), "is missing, with no default")
   expect_identical(foo("arg"), "arg")
 })
+
+test_that("deprecated arguments are stored in attributes", {
+  foo <- set_env(function(new1, new2, new3) NULL, ns_env("rlang"))
+  foo <- deprecate(foo, "0.1.0", old1 = new1, old2 = )
+  foo <- deprecate(foo, "0.2.0", old3 = new3)
+
+  depr_args <- deprecated_args(foo)
+  expect_named(depr_args, c("old1", "old2", "old3"))
+
+  arg1 <- depr_args[[1]]
+  arg2 <- depr_args[[2]]
+  arg3 <- depr_args[[3]]
+  expect_identical(arg1, list(successor = "new1", cycle = c("0.1.0", "0.2.0", "0.3.0")))
+  expect_identical(arg2, list(successor = "", cycle = c("0.1.0", "0.2.0", "0.3.0")))
+  expect_identical(arg3, list(successor = "new3", cycle = c("0.2.0", "0.3.0", "0.4.0")))
+})
