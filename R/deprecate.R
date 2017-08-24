@@ -1,6 +1,6 @@
 
 deprecate <- function(.fn, .cycle, ..., .msg = NULL) {
-  nm <- as_string(ensym(.fn))
+  nm <- ensym(.fn)
   stopifnot(is_closure(.fn))
 
   if (is_fn_replacement(...)) {
@@ -21,7 +21,7 @@ is_fn_replacement <- function(...) {
 
 deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   if (is_deprecated(.fn)) {
-    abort(sprintf("Function `%s` is already deprecated", .name))
+    abort(sprintf("Function `%s` is already deprecated", as_string(.name)))
   }
 
   if (dots_n(...)) {

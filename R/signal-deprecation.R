@@ -1,18 +1,19 @@
 #' Signal deprecation of a function or arguments
 #'
-#' @param .name The name of the function that is deprecated or whose
-#'   arguments are deprecated.
+#' @param .fn The function to deprecate or whose arguments are to be
+#'   deprecated. This should be supplied as a bare name.
 #' @param .cycle A character vector defining the deprecation cycle.
 #' @param ... Replacements.
 #' @param .msg A custom error message.
 #'
 #' @export
-signal_deprecation <- function(.name, .cycle, ..., .msg = NULL) {
-  fn <- caller_fn()
-  stopifnot(is_namespace(get_env(fn)))
+signal_deprecation <- function(.fn, .cycle, ..., .msg = NULL) {
+  name <- as_string(ensym(.fn))
+  caller_fn <- caller_fn()
+  stopifnot(is_namespace(get_env(caller_fn)))
 
   cycle <- new_cycle(.cycle)
-  pkg_version <- pkg_ver(ns_env_name(fn))
+  pkg_version <- pkg_ver(ns_env_name(caller_fn))
 
   level <- deprecation_level(cycle, pkg_version)
   effective_level <- maybe_promote_deprecation(level)
@@ -36,7 +37,7 @@ signal_deprecation <- function(.name, .cycle, ..., .msg = NULL) {
     }
 
     version <- as.character(cycle[[level]])
-    msg <- deprecated_function_msg(.name, version, level, replacement)
+    msg <- deprecated_function_msg(name, version, level, replacement)
 
     return(signal("deprecated",
       replacement = replacement,

@@ -4,11 +4,11 @@
 \alias{signal_deprecation}
 \title{Signal deprecation of a function or arguments}
 \usage{
-signal_deprecation(.name, .cycle, ..., .msg = NULL)
+signal_deprecation(.fn, .cycle, ..., .msg = NULL)
 }
 \arguments{
-\item{.name}{The name of the function that is deprecated or whose
-arguments are deprecated.}
+\item{.fn}{The function to deprecate or whose arguments are to be
+deprecated. This should be supplied as a bare name.}
 
 \item{.cycle}{A character vector defining the deprecation cycle.}
 
