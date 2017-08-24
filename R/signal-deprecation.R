@@ -30,7 +30,7 @@ signal_deprecation <- function(.name, .cycle, ..., .msg = NULL) {
 
   if (is_fn_replacement(...)) {
     if (dots_n(...)) {
-      replacement <- string(...)
+      replacement <- as_string(expr(...))
     } else {
       replacement <- NULL
     }
@@ -82,7 +82,7 @@ deprecated_function_msg <- function(name, version, level, replacement = NULL) {
 
   msg <- sprintf("`%s` is %s as of version %s", name, type, version)
   if (!is_null(replacement)) {
-    msg <- sprintf("%s, please use `%s` instead", msg, replacement)
+    msg <- sprintf("%s, please use `%s()` instead", msg, replacement)
   }
 
   msg

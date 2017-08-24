@@ -41,5 +41,7 @@ test_that("deprecated function signals itself defunct", {
   expect_error(oldie(), "defunct as of version 0.1.0")
 })
 
-  expect_error(foo(), "defunct as of version 0.1.0")
+test_that("deprecated function signals a replacement if supplied", {
+  oldie <- deprecate(rlang_fn, defunct_cycle, bar)
+  expect_error(oldie(), "please use `bar()` instead", fixed = TRUE)
 })
