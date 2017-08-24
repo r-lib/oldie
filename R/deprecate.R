@@ -24,7 +24,15 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
     abort(sprintf("Function `%s` is already deprecated", .name))
   }
 
-  data <- list(.name, .cycle, ..., .msg = .msg)
+  if (dots_n(...)) {
+    replacement <- expr(...)
+    if (!is_symbol(replacement)) {
+      abort("Replacement function must be a symbol")
+    }
+    data <- list(.name, .cycle, replacement, .msg = .msg)
+  } else {
+    data <- list(.name, .cycle, .msg = .msg)
+  }
 
   # Remove NULL arguments for prettier code expansion
   if (is_null(.msg)) {
