@@ -80,7 +80,7 @@ deprecated_function_msg <- function(name, version, level, replacement = NULL) {
     `3` = "defunct"
   )
 
-  msg <- sprintf("`%s` is %s as of version %s", name, type, version)
+  msg <- sprintf("`%s()` is %s as of version %s", name, type, version)
   if (!is_null(replacement)) {
     msg <- sprintf("%s, please use `%s()` instead", msg, replacement)
   }
