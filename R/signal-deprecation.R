@@ -9,8 +9,11 @@
 #' @export
 signal_deprecation <- function(.fn, .cycle, ..., .msg = NULL) {
   name <- as_string(ensym(.fn))
+
   caller_fn <- caller_fn()
-  stopifnot(is_namespace(get_env(caller_fn)))
+  if (!is_namespace(get_env(caller_fn))) {
+    abort("Deprecated functions must be scoped in a namespace")
+  }
 
   cycle <- new_cycle(.cycle)
   pkg_version <- pkg_ver(ns_env_name(caller_fn))

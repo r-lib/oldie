@@ -45,3 +45,9 @@ test_that("deprecated function signals a replacement if supplied", {
   oldie <- deprecate(rlang_fn, defunct_cycle, bar)
   expect_error(oldie(), "please use `bar()` instead", fixed = TRUE)
 })
+
+test_that("deprecated function fails if not scoped in a namespace", {
+  oldie <- function() "return"
+  oldie <- deprecate(oldie, "99.9.0")
+  expect_error(oldie(), "must be scoped in a namespace")
+})
