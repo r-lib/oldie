@@ -48,3 +48,10 @@ test_that("new arguments are reassigned if old is supplied", {
   foo <- deprecate(foo, "99.9.0", old = new)
   expect_identical(foo(, 2), list(2, 2))
 })
+
+test_that("no reassignment when new argument has not been declared", {
+  foo <- set_env(function() old, ns_env("rlang"))
+  foo <- deprecate(foo, "99.9.0", old = )
+  expect_error(foo(), "is missing, with no default")
+  expect_identical(foo("arg"), "arg")
+})

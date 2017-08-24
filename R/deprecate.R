@@ -16,7 +16,7 @@ is_fn_replacement <- function(...) {
     return(TRUE)
   }
 
-  n_dots == 1 && names2(exprs(...)) == ""
+  n_dots == 1 && names2(exprs(..., .ignore_empty = "none")) == ""
 }
 
 deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
@@ -48,7 +48,7 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
 }
 
 deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
-  args <- exprs(...)
+  args <- exprs(..., .ignore_empty = "none")
   if (!every(args, is_symbol)) {
     abort("Successors must be symbols")
   }
@@ -61,7 +61,7 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   args_chr <- map_chr(args, as_string)
   fmls <- fn_fmls(.fn)
   fmls_nms <- names(fmls)
-  if (!all(args_chr %in% fmls_nms)) {
+  if (!all(args_chr %in% c(fmls_nms, ""))) {
     abort("Can't find successor in function arguments")
   }
   if (any(nms %in% fmls_nms)) {
@@ -85,10 +85,16 @@ depr_argument_expr <- function(old, new, name, cycle, body) {
   old_sym <- sym(old)
   new_sym <- sym(new)
 
+  if (is_missing(new_sym)) {
+    reassign <- NULL
+  } else {
+    reassign <- expr(UQ(new_sym) <- UQ(old_sym))
+  }
+
   expr(
     if (!missing(!! old_sym)) {
       oldie::signal_deprecation(!! name, !! cycle, !!! set_names(new, old))
-      UQ(new_sym) <- UQ(old_sym)
+      !!! reassign
     }
   )
 }
