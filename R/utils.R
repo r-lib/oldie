@@ -33,3 +33,13 @@ pluralise <- function(n, singular, plural) {
 pluralise_len <- function(x, singular, plural) {
   pluralise(length(x), singular, plural)
 }
+
+is_namespaced_symbol <- function(x) {
+  if (typeof(x) != "language") {
+    return(FALSE)
+  }
+
+  first <- node_car(x)
+  arg <- node_cadr(node_cdr(x))
+  identical(first, quote(`::`)) && is_symbol(arg)
+}

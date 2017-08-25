@@ -66,6 +66,11 @@ test_that("deprecated function fails if not scoped in a namespace", {
   expect_error(oldie(), "must be scoped in a namespace")
 })
 
+test_that("can supply namespaced replacement function", {
+  oldie <- deprecate(rlang_fn, defunct_cycle, pkg::bar)
+  expect_error(oldie(), "please use `pkg::bar()` instead", fixed = TRUE)
+})
+
 
 # Arguments -----------------------------------------------------------
 

@@ -139,7 +139,7 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
 
   if (dots_n(...)) {
     replacement <- expr(...)
-    if (!is_symbol(replacement)) {
+    if (!is_symbol(replacement) && !is_namespaced_symbol(replacement)) {
       abort("Replacement function must be a symbol")
     }
     data <- list(.name, .cycle, replacement, .msg = .msg)

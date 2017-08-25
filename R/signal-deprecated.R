@@ -38,7 +38,8 @@ signal_deprecated <- function(.fn, .cycle, ..., .msg = NULL) {
 
   if (is_fn_replacement(...)) {
     if (dots_n(...)) {
-      replacement <- as_string(expr(...))
+      # Using expr_text() because it might be a namespaced symbol
+      replacement <- expr_text(expr(...))
     } else {
       replacement <- NULL
     }
