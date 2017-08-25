@@ -24,6 +24,8 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
     abort(sprintf("Function `%s` is already deprecated", as_string(.name)))
   }
 
+  .cycle <- new_cycle_chr(.cycle)
+
   if (dots_n(...)) {
     replacement <- expr(...)
     if (!is_symbol(replacement)) {
