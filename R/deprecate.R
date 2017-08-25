@@ -52,19 +52,19 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
 deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   args <- exprs(..., .ignore_empty = "none")
   if (!every(args, is_symbol)) {
-    abort("Successors must be symbols")
+    abort("Replacements must be symbols")
   }
 
   nms <- names2(args)
   if (any(nms == "")) {
-    abort("Deprecated arguments must be named with their successors")
+    abort("Replacements must be named")
   }
 
   args_chr <- map_chr(args, as_string)
   formals <- fn_fmls(.fn)
   formals_nms <- names(formals)
   if (!all(args_chr %in% c(formals_nms, ""))) {
-    abort("Can't find successor in function arguments")
+    abort("Can't find replacement in function arguments")
   }
   if (any(nms %in% formals_nms)) {
     abort("Can't add deprecated argument since it already exists in the function")
@@ -106,8 +106,8 @@ deprecated_arg_expr <- function(old, new, name, cycle, body) {
     }
   )
 }
-deprecated_arg <- function(successor, cycle) {
-  list(successor = successor, cycle = cycle)
+deprecated_arg <- function(replacement, cycle) {
+  list(replacement = replacement, cycle = cycle)
 }
 
 is_deprecated <- function(x) {

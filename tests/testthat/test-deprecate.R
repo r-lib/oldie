@@ -33,7 +33,7 @@ test_that("replacements must not exist in function", {
 
 test_that("replaced arguments must exist in function", {
   foo <- function(foo, bar) "returned"
-  expect_error(deprecate(foo, "0.1.0", bar = other), "Can't find successor")
+  expect_error(deprecate(foo, "0.1.0", bar = other), "Can't find replacement")
 })
 
 test_that("can't deprecate the same argument twice", {
@@ -67,9 +67,9 @@ test_that("deprecated arguments are stored in attributes", {
   arg1 <- depr_args[[1]]
   arg2 <- depr_args[[2]]
   arg3 <- depr_args[[3]]
-  expect_identical(arg1, list(successor = "new1", cycle = c("0.1.0", "0.2.0", "0.3.0")))
-  expect_identical(arg2, list(successor = "", cycle = c("0.1.0", "0.2.0", "0.3.0")))
-  expect_identical(arg3, list(successor = "new3", cycle = c("0.2.0", "0.3.0", "0.4.0")))
+  expect_identical(arg1, list(replacement = "new1", cycle = c("0.1.0", "0.2.0", "0.3.0")))
+  expect_identical(arg2, list(replacement = "", cycle = c("0.1.0", "0.2.0", "0.3.0")))
+  expect_identical(arg3, list(replacement = "new3", cycle = c("0.2.0", "0.3.0", "0.4.0")))
 })
 
 test_that("new arguments are added without defaults", {
