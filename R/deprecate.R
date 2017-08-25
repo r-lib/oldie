@@ -8,7 +8,7 @@
 #' argument is supplied, and checks that the deprecation cycle
 #' conforms to tidyverse rules.
 #'
-#' The conditions are signalled with with `signal_deprecated()` which
+#' The conditions are signalled with with `signal_retired()` which
 #' has the same interface as `deprecate()`. It should always be called
 #' directly within the deprecated function. Since it is added
 #' automatically by `deprecate()`, you should rarely have to call it
@@ -153,7 +153,7 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   }
 
   body(.fn) <- expr({
-    oldie::signal_deprecated(!!! data)
+    oldie::signal_retired(!!! data)
     !!! body(.fn)
   })
 
@@ -227,7 +227,7 @@ deprecated_arg_expr <- function(old, new, name, cycle, body) {
 
   expr(
     if (!missing(!! old_sym)) {
-      oldie::signal_deprecated(!! name, !! cycle, !!! set_names(new, old))
+      oldie::signal_retired(!! name, !! cycle, !!! set_names(new, old))
       !!! reassign
     }
   )

@@ -1,6 +1,6 @@
 #' @rdname deprecate
 #' @export
-signal_deprecated <- function(.fn, .cycle, ..., .msg = NULL) {
+signal_retired <- function(.fn, .cycle, ..., .msg = NULL) {
   name <- as_string(ensym(.fn))
 
   caller_fn <- caller_fn()
