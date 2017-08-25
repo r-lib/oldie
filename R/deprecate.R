@@ -61,16 +61,17 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   }
 
   args_chr <- map_chr(args, as_string)
-  fmls <- fn_fmls(.fn)
-  fmls_nms <- names(fmls)
-  if (!all(args_chr %in% c(fmls_nms, ""))) {
+  formals <- fn_fmls(.fn)
+  formals_nms <- names(formals)
+  if (!all(args_chr %in% c(formals_nms, ""))) {
     abort("Can't find successor in function arguments")
   }
-  if (any(nms %in% fmls_nms)) {
+  if (any(nms %in% formals_nms)) {
     abort("Can't add deprecated argument since it already exists in the function")
   }
 
-  fn_fmls(.fn) <- c(fmls, args)
+  new_args <- map(args, function(...) missing_arg())
+  fn_fmls(.fn) <- c(formals, new_args)
 
   depr_exprs <- map2(nms, args_chr, deprecated_arg_expr, .name, .cycle)
   fn_body(.fn) <- expr({

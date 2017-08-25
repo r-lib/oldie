@@ -71,3 +71,12 @@ test_that("deprecated arguments are stored in attributes", {
   expect_identical(arg2, list(successor = "", cycle = c("0.1.0", "0.2.0", "0.3.0")))
   expect_identical(arg3, list(successor = "new3", cycle = c("0.2.0", "0.3.0", "0.4.0")))
 })
+
+test_that("new arguments are added without defaults", {
+  foo <- function(new) NULL
+  fmls <- formals(deprecate(foo, "0.1.0", old = ))
+  expect_identical(as.list(fmls), alist(new = , old = ))
+
+  replaced_fmls <- formals(deprecate(foo, "0.1.0", old = new))
+  expect_identical(as.list(replaced_fmls), alist(new = , old = ))
+})
