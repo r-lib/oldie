@@ -37,3 +37,8 @@ test_that("versions are trimmed", {
   expect_identical(ver_trim(ver, 3), ver)
   expect_identical(ver_trim(ver, 2), ver("0.1"))
 })
+
+test_that("new_cycle_chr() handles empty versions", {
+  cycle <- c("0.1.0", "", "")
+  expect_identical(new_cycle_chr(cycle), cycle)
+})

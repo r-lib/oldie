@@ -12,7 +12,9 @@ new_cycle <- function(cycle) {
   cycle
 }
 new_cycle_chr <- function(cycle) {
-  map_chr(new_cycle(cycle), as.character)
+  cycle <- new_cycle(cycle)
+  cycle <- map_if(cycle, is_null, function(...) "")
+  map_chr(cycle, as.character)
 }
 
 chr_as_cycle <- function(cycle) {
