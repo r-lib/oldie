@@ -1,6 +1,14 @@
 context("signal")
 
-defunct_cycle <- c("", "", as.character(past_rlang_ver()))
+past_ver <- as.character(past_rlang_ver())
+
+soft_deprecated_cycle <- c(past_ver, "", "")
+deprecated_cycle <- c("", past_ver, "")
+defunct_cycle <- c("", "", past_ver)
+
+
+# Functions ----------------------------------------------------------
+
 rlang_fn <- set_env(function() "returned", ns_env("rlang"))
 
 test_that("correct deprecation message is built", {
@@ -19,33 +27,25 @@ test_that("deprecated function does not signal if not in deprecation cycle", {
 })
 
 test_that("deprecated function signals soft-deprecation", {
-  past_ver <- as.character(past_rlang_ver())
-  oldie <- deprecate(rlang_fn, c(past_ver, "", ""))
-
+  oldie <- deprecate(rlang_fn, soft_deprecated_cycle)
   msg <- sprintf("deprecated as of version %s", past_ver)
   expect_condition(oldie(), "deprecated", msg)
 })
 
 test_that("deprecated function signals deprecation", {
-  past_ver <- as.character(past_rlang_ver())
-  oldie <- deprecate(rlang_fn, c("", past_ver, ""))
-
-  msg <- sprintf("deprecated as of version %s", past_ver)
-  expect_warning(oldie(), msg)
+  oldie <- deprecate(rlang_fn, deprecated_cycle)
+  expect_warning(oldie(), sprintf("deprecated as of version %s", past_ver))
 })
 
 test_that("deprecated function signals itself defunct", {
-  past_ver <- as.character(past_rlang_ver())
-  oldie <- deprecate(rlang_fn, c("", "", past_ver))
-
+  oldie <- deprecate(rlang_fn, defunct_cycle)
   expect_error(oldie(), "defunct as of version 0.1.0")
 })
 
 test_that("deprecation stages are promoted", {
-  past_ver <- as.character(past_rlang_ver())
-  oldie <- deprecate(rlang_fn, c("", past_ver, ""))
-
   scoped_options(oldie_verbose_deprecation = TRUE)
+
+  oldie <- deprecate(rlang_fn, deprecated_cycle)
   expect_error(oldie(), sprintf("defunct as of version %s", past_ver))
 })
 
