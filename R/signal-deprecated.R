@@ -1,11 +1,4 @@
-#' Signal deprecated function or arguments
-#'
-#' @param .fn The function to deprecate or whose arguments are to be
-#'   deprecated. This should be supplied as a bare name.
-#' @param .cycle A character vector defining the deprecation cycle.
-#' @param ... Replacements.
-#' @param .msg A custom error message.
-#'
+#' @rdname deprecate
 #' @export
 signal_deprecated <- function(.fn, .cycle, ..., .msg = NULL) {
   name <- as_string(ensym(.fn))
