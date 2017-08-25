@@ -1,4 +1,4 @@
-context("deprecate")
+context("retire")
 
 # Function -----------------------------------------------------------
 
