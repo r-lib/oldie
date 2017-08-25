@@ -40,7 +40,7 @@ signal_deprecated <- function(.fn, .cycle, ..., .msg = NULL) {
     }
 
     version <- as.character(cycle[[level]])
-    msg <- deprecated_function_msg(name, version, level, replacement)
+    msg <- deprecated_function_msg(name, version, effective_level, replacement)
 
     return(signal("deprecated",
       replacement = replacement,

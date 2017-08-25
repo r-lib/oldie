@@ -41,6 +41,14 @@ test_that("deprecated function signals itself defunct", {
   expect_error(oldie(), "defunct as of version 0.1.0")
 })
 
+test_that("deprecation stages are promoted", {
+  past_ver <- as.character(past_rlang_ver())
+  oldie <- deprecate(rlang_fn, c("", past_ver, ""))
+
+  scoped_options(oldie_verbose_deprecation = TRUE)
+  expect_error(oldie(), sprintf("defunct as of version %s", past_ver))
+})
+
 test_that("deprecated function signals a replacement if supplied", {
   oldie <- deprecate(rlang_fn, defunct_cycle, bar)
   expect_error(oldie(), "please use `bar()` instead", fixed = TRUE)
