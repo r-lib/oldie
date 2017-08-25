@@ -24,3 +24,5 @@ Imports:
     rlang
 Suggests:
     testthat
+Remotes:
+    lionel-/rlang@4ccb8d2
