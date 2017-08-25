@@ -40,7 +40,7 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   }
 
   body(.fn) <- expr({
-    oldie::signal_deprecation(!!! data)
+    oldie::signal_deprecated(!!! data)
     !!! body(.fn)
   })
 
@@ -98,7 +98,7 @@ deprecated_arg_expr <- function(old, new, name, cycle, body) {
 
   expr(
     if (!missing(!! old_sym)) {
-      oldie::signal_deprecation(!! name, !! cycle, !!! set_names(new, old))
+      oldie::signal_deprecated(!! name, !! cycle, !!! set_names(new, old))
       !!! reassign
     }
   )
