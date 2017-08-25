@@ -17,3 +17,19 @@ slide_lgl <- function(.x, .f, ...) {
 }
 
 is_language <- is_lang
+
+bad_symbols <- function(chr) {
+  bad <- glue::backtick(chr)
+  bad <- glue::collapse(bad, ", ", last = " and ")
+  bad
+}
+pluralise <- function(n, singular, plural) {
+  if (n == 1) {
+    singular
+  } else {
+    plural
+  }
+}
+pluralise_len <- function(x, singular, plural) {
+  pluralise(length(x), singular, plural)
+}
