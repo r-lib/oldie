@@ -6,6 +6,10 @@ soft_deprecated_cycle <- c(past_ver, "", "")
 deprecated_cycle <- c("", past_ver, "")
 defunct_cycle <- c("", "", past_ver)
 
+if (is_true(peek_option("oldie_verbose_deprecation"))) {
+  abort("Verbose deprecation should be disabled")
+}
+
 
 # Functions ----------------------------------------------------------
 
@@ -13,9 +17,8 @@ rlang_fn <- set_env(function() "returned", ns_env("rlang"))
 
 test_that("correct deprecation message is built", {
   cycle <- c("1.0.0", "2.0.0", "3.0.0")
-  expect_identical(deprecated_function_msg("foo", "1.0.0", 1, "bar"), "`foo()` is soft-deprecated as of version 1.0.0, please use `bar()` instead")
-  expect_identical(deprecated_function_msg("foo", "2.0.0", 2), "`foo()` is deprecated as of version 2.0.0")
-  expect_identical(deprecated_function_msg("foo", "3.0.0", 3), "`foo()` is defunct as of version 3.0.0")
+  expect_identical(deprecated_function_msg("foo", "1.0.0", "soft-deprecated", "bar"), "`foo()` is soft-deprecated as of version 1.0.0, please use `bar()` instead")
+  expect_identical(deprecated_function_msg("foo", "2.0.0", "deprecated"), "`foo()` is deprecated as of version 2.0.0")
 })
 
 test_that("deprecated function does not signal if not in deprecation cycle", {
@@ -47,6 +50,9 @@ test_that("deprecation stages are promoted", {
 
   oldie <- deprecate(rlang_fn, deprecated_cycle)
   expect_error(oldie(), sprintf("defunct as of version %s", past_ver))
+
+  oldie <- deprecate(rlang_fn, "99.9.0", bar)
+  expect_condition(oldie(), "deprecated", "soft-deprecated as of version `undefined`")
 })
 
 test_that("deprecated function signals a replacement if supplied", {
@@ -58,4 +64,60 @@ test_that("deprecated function fails if not scoped in a namespace", {
   oldie <- function() "return"
   oldie <- deprecate(oldie, "99.9.0")
   expect_error(oldie(), "must be scoped in a namespace")
+})
+
+
+# Arguments -----------------------------------------------------------
+
+rlang_fn <- set_env(function(new) "returned", ns_env("rlang"))
+
+test_that("correct argument deprecation message is built", {
+  cycle <- c("1.0.0", "2.0.0", "3.0.0")
+  expect_identical(
+    deprecated_argument_msg("foo", "arg", "1.0.0", "soft-deprecated", "bar"),
+    unclass(glue(
+      "Argument `arg` of function `foo()` is soft-deprecated as of version 1.0.0
+       Please use `bar` instead"
+    ))
+  )
+  expect_identical(
+    deprecated_argument_msg("foo", "arg", "2.0.0", "deprecated"),
+    "Argument `arg` of function `foo()` is deprecated as of version 2.0.0"
+  )
+})
+
+test_that("deprecated argument signals soft-deprecation", {
+  oldie <- deprecate(rlang_fn, soft_deprecated_cycle, old = new)
+  expect_condition(oldie(old = foo), "deprecated_arg",
+    glue(
+      "Argument `old` of function `rlang_fn()` is soft-deprecated as of version 0.1.0
+       Please use `new` instead"
+    ),
+    fixed = TRUE
+  )
+})
+
+test_that("deprecated argument signals deprecation", {
+  oldie <- deprecate(rlang_fn, deprecated_cycle, old = )
+  expect_warning(oldie(old = foo),
+    "Argument `old` of function `rlang_fn()` is deprecated",
+    fixed = TRUE
+  )
+})
+
+test_that("deprecated argument signals defunction", {
+  oldie <- deprecate(rlang_fn, defunct_cycle, old = )
+  expect_error(oldie(old = foo),
+    "Argument `old` of function `rlang_fn()` is defunct",
+    fixed = TRUE
+  )
+})
+
+test_that("deprecated argument signals are promoted", {
+  scoped_options(oldie_verbose_deprecation = TRUE)
+  oldie <- deprecate(rlang_fn, deprecated_cycle, old = )
+  expect_error(oldie(old = foo),
+    "Argument `old` of function `rlang_fn()` is defunct",
+    fixed = TRUE
+  )
 })

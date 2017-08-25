@@ -14,11 +14,22 @@ signal_deprecated <- function(.fn, .cycle, ..., .msg = NULL) {
   level <- deprecation_level(cycle, pkg_version)
   effective_level <- maybe_promote_deprecation(level)
 
+  if (!level) {
+    version <- "`undefined`"
+  } else {
+    version <- as.character(cycle[[level]])
+  }
+
   # Return immediately if not yet deprecated
   if (effective_level < 1) {
     return(invisible(NULL))
   }
 
+  type <- switch(effective_level,
+    `1` = "soft-deprecated",
+    `2` = "deprecated",
+    `3` = "defunct"
+  )
   signal <- switch(effective_level,
     `1` = cnd_signal,
     `2` = cnd_warn,
@@ -32,21 +43,34 @@ signal_deprecated <- function(.fn, .cycle, ..., .msg = NULL) {
       replacement <- NULL
     }
 
-    version <- as.character(cycle[[level]])
-    msg <- deprecated_function_msg(name, version, effective_level, replacement)
+    msg <- deprecated_function_msg(name, version, type, replacement)
 
-    return(signal("deprecated",
+    signal("deprecated",
+      name = name,
       replacement = replacement,
       version = version,
       .msg = msg
-    ))
+    )
+    return(invisible(NULL))
   }
 
-  browser("TODO")
+  replacements <- dots_list(...)
+  args <- names(replacements)
 
-  return(invisible(NULL))
+  for (i in seq_along(replacements)) {
+    msg <- deprecated_argument_msg(name, args[[i]], version, type, replacements[[i]])
+
+    signal("deprecated_arg",
+      name = name,
+      argument = args[[i]],
+      replacement = replacements[[i]],
+      version = version,
+      .msg = msg
+    )
+  }
+
+  invisible(NULL)
 }
-
 deprecation_level <- function(cycle, pkg_version) {
   due_levels <- map_lgl(cycle, function(ver) !is_null(ver) && ver <= pkg_version)
 
@@ -64,22 +88,36 @@ maybe_promote_deprecation <- function(level) {
   level
 }
 
-deprecated_function_msg <- function(name, version, level, replacement = NULL) {
+deprecated_function_msg <- function(name, version, type,
+                                    replacement = NULL) {
   stopifnot(
     is_string(name),
-    is_string(version),
     is_null(replacement) || is_string(replacement)
-  )
-
-  type <- switch(level,
-    `1` = "soft-deprecated",
-    `2` = "deprecated",
-    `3` = "defunct"
   )
 
   msg <- sprintf("`%s()` is %s as of version %s", name, type, version)
   if (!is_null(replacement)) {
     msg <- sprintf("%s, please use `%s()` instead", msg, replacement)
+  }
+
+  msg
+}
+deprecated_argument_msg <- function(name, argument, version, type,
+                                    replacement = "") {
+  stopifnot(
+    is_string(name),
+    is_string(argument),
+    is_string(replacement)
+  )
+
+  msg <- sprintf("Argument `%s` of function `%s()` is %s as of version %s",
+    argument,
+    name,
+    type,
+    version
+  )
+  if (!identical(replacement, "")) {
+    msg <- sprintf("%s\nPlease use `%s` instead", msg, replacement)
   }
 
   msg
