@@ -2,16 +2,16 @@
 #'
 #' @description
 #'
-#' `deprecate()` marks a function or some of its arguments as
+#' `retire()` marks a function or some of its arguments as
 #' obsolete. This enables automatic documentation by roxygen, signals
 #' a condition when a deprecated function is run or when a deprecated
 #' argument is supplied, and checks that the deprecation cycle
 #' conforms to tidyverse rules.
 #'
 #' The conditions are signalled with with `signal_retired()` which
-#' has the same interface as `deprecate()`. It should always be called
+#' has the same interface as `retire()`. It should always be called
 #' directly within the deprecated function. Since it is added
-#' automatically by `deprecate()`, you should rarely have to call it
+#' automatically by `retire()`, you should rarely have to call it
 #' yourself.
 #'
 #' @section Deprecation levels:
@@ -82,15 +82,15 @@
 #' old_fn <- function() "old"
 #'
 #' # You can deprecate it without any replacement:
-#' deprecate(old_fn, "0.1.0")
+#' retire(old_fn, "0.1.0")
 #'
 #' # The cycle above specifies only one version. The cycle is
 #' # automatically filled and the above expression is thus equivalent to:
-#' deprecate(old_fn, c("0.1.0", "0.2.0", "0.3.0"))
+#' retire(old_fn, c("0.1.0", "0.2.0", "0.3.0"))
 #'
 #' # If there is a new function replacing the old one, just supply its
 #' # bare name:
-#' deprecate(old_fn, "0.1.0", replacement_fn)
+#' retire(old_fn, "0.1.0", replacement_fn)
 #'
 #'
 #' # Deprecating an argument is very similar. They are supplied as
@@ -98,26 +98,26 @@
 #' # value, if supplied, is the replacement. This deprecates an
 #' # argument without replacement:
 #' fn <- function(..., old) NULL
-#' deprecate(fn, "0.1.0", old = )
+#' retire(fn, "0.1.0", old = )
 #'
 #' # This deprecates with replacement. The deprecated argument is
 #' # automatically reassigned to the replacement:
 #' fn <- function(..., new, old) NULL
-#' deprecate(fn, "0.1.0", old = new)
+#' retire(fn, "0.1.0", old = new)
 #'
 #' # The deprecated argument will be added to the formals if
 #' # needed. This way you can omit the deprecated arguments from the
 #' # function declaration:
 #' fn <- function(..., new) NULL
-#' deprecate(fn, "0.1.0", old = new)
-deprecate <- function(.fn, .cycle, ..., .msg = NULL) {
+#' retire(fn, "0.1.0", old = new)
+retire <- function(.fn, .cycle, ..., .msg = NULL) {
   nm <- ensym(.fn)
   stopifnot(is_closure(.fn))
 
   if (is_fn_replacement(...)) {
-    deprecate_function(.fn, nm, .cycle, ..., .msg = .msg)
+    retire_function(.fn, nm, .cycle, ..., .msg = .msg)
   } else {
-    deprecate_arguments(.fn, nm, .cycle, ..., .msg = .msg)
+    retire_arguments(.fn, nm, .cycle, ..., .msg = .msg)
   }
 }
 is_fn_replacement <- function(...) {
@@ -130,8 +130,8 @@ is_fn_replacement <- function(...) {
   n_dots == 1 && names2(exprs(..., .ignore_empty = "none")) == ""
 }
 
-deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
-  if (is_deprecated(.fn)) {
+retire_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
+  if (is_retired(.fn)) {
     abort(sprintf("Function `%s` is already deprecated", as_string(.name)))
   }
 
@@ -157,10 +157,10 @@ deprecate_function <- function(.fn, .name, .cycle, ..., .msg = NULL) {
     !!! body(.fn)
   })
 
-  set_attrs(.fn, deprecated = TRUE)
+  set_attrs(.fn, retired = TRUE)
 }
 
-deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
+retire_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   args <- exprs(..., .ignore_empty = "none")
   if (!every(args, is_symbol)) {
     abort("Replacements must be symbols")
@@ -171,18 +171,18 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
     abort("Replacements must be named")
   }
 
-  already_deprecated <- nms %in% names(deprecated_args(.fn))
-  if (any(already_deprecated)) {
-    bad <- nms[already_deprecated]
+  already_retired <- nms %in% names(retired_args(.fn))
+  if (any(already_retired)) {
+    bad <- nms[already_retired]
     has <- pluralise_len(bad, "has", "have")
     abort(glue("{ bad_symbols(bad) } { has } already been deprecated"))
   }
 
   replacements <- map_chr(args, as_string)
 
-  .fn <- add_deprecated_formals(.fn, replacements)
+  .fn <- add_retired_formals(.fn, replacements)
 
-  depr_exprs <- map2(nms, replacements, deprecated_arg_expr, .name, .cycle)
+  depr_exprs <- map2(nms, replacements, retired_arg_expr, .name, .cycle)
   fn_body(.fn) <- expr({
     !!! depr_exprs
 
@@ -192,13 +192,13 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   })
 
   .cycle <- new_cycle_chr(.cycle)
-  deprecated_args <- map(set_names(replacements, nms), deprecated_arg, cycle = .cycle)
-  deprecated_args <- c(deprecated_args(.fn), deprecated_args)
-  .fn <- set_attrs(.fn, deprecated_args = deprecated_args)
+  retired_args <- map(set_names(replacements, nms), retired_arg, cycle = .cycle)
+  retired_args <- c(retired_args(.fn), retired_args)
+  .fn <- set_attrs(.fn, retired_args = retired_args)
 
   .fn
 }
-add_deprecated_formals <- function(fn, replacements) {
+add_retired_formals <- function(fn, replacements) {
   formals <- fn_fmls(fn)
   formals_nms <- names(formals)
   if (!all(replacements %in% c(formals_nms, ""))) {
@@ -215,7 +215,7 @@ add_deprecated_formals <- function(fn, replacements) {
   fn
 }
 
-deprecated_arg_expr <- function(old, new, name, cycle, body) {
+retired_arg_expr <- function(old, new, name, cycle, body) {
   old_sym <- sym(old)
   new_sym <- sym(new)
 
@@ -234,16 +234,16 @@ deprecated_arg_expr <- function(old, new, name, cycle, body) {
 }
 utils::globalVariables("UQ<-")
 
-deprecated_arg <- function(replacement, cycle) {
+retired_arg <- function(replacement, cycle) {
   list(replacement = replacement, cycle = cycle)
 }
 
-is_deprecated <- function(x) {
-  is_true(attr(x, "deprecated"))
+is_retired <- function(x) {
+  is_true(attr(x, "retired"))
 }
-has_deprecated_args <- function(x) {
-  length(deprecated_args(x))
+has_retired_args <- function(x) {
+  length(retired_args(x))
 }
-deprecated_args <- function(x) {
-  attr(x, "deprecated_args")
+retired_args <- function(x) {
+  attr(x, "retired_args")
 }

@@ -1,4 +1,4 @@
-#' @rdname deprecate
+#' @rdname retire
 #' @export
 signal_retired <- function(.fn, .cycle, ..., .msg = NULL) {
   name <- as_string(ensym(.fn))
