@@ -121,6 +121,8 @@ deprecated_arg_expr <- function(old, new, name, cycle, body) {
     }
   )
 }
+utils::globalVariables("UQ<-")
+
 deprecated_arg <- function(replacement, cycle) {
   list(replacement = replacement, cycle = cycle)
 }
