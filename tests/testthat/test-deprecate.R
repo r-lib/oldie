@@ -26,11 +26,6 @@ test_that("replaced arguments must be named", {
   expect_error(deprecate(foo, "0.1.0", foo = bar, replaced), "must be named")
 })
 
-test_that("replacements must not exist in function", {
-  foo <- function(foo, bar) "returned"
-  expect_error(deprecate(foo, "0.1.0", bar = foo), "already exists in the function")
-})
-
 test_that("replaced arguments must exist in function", {
   foo <- function(foo, bar) "returned"
   expect_error(deprecate(foo, "0.1.0", bar = other), "Can't find replacement")
@@ -39,7 +34,10 @@ test_that("replaced arguments must exist in function", {
 test_that("can't deprecate the same argument twice", {
   foo <- function(foo) "returned"
   foo <- deprecate(foo, "0.1.0", bar = foo)
-  expect_error(deprecate(foo, "0.1.0", bar = foo), "already exists in the function")
+  expect_error(deprecate(foo, "0.1.0", bar = foo), "`bar` has already been deprecated")
+
+  foo <- deprecate(foo, "0.1.0", baz = foo)
+  expect_error(deprecate(foo, "0.1.0", bar = foo, baz = foo), "`bar` and `baz` have already been deprecated")
 })
 
 test_that("new arguments are reassigned if old is supplied", {
@@ -79,4 +77,9 @@ test_that("new arguments are added without defaults", {
 
   replaced_fmls <- formals(deprecate(foo, "0.1.0", old = new))
   expect_identical(as.list(replaced_fmls), alist(new = , old = ))
+})
+
+test_that("can add mark existing argument as deprecated", {
+  foo <- function(new, old) "foo()"
+  expect_error(regexp = NA, deprecate(foo, "0.1.0", old = ))
 })

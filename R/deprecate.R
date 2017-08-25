@@ -60,20 +60,18 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
     abort("Replacements must be named")
   }
 
-  args_chr <- map_chr(args, as_string)
-  formals <- fn_fmls(.fn)
-  formals_nms <- names(formals)
-  if (!all(args_chr %in% c(formals_nms, ""))) {
-    abort("Can't find replacement in function arguments")
-  }
-  if (any(nms %in% formals_nms)) {
-    abort("Can't add deprecated argument since it already exists in the function")
+  already_deprecated <- nms %in% names(deprecated_args(.fn))
+  if (any(already_deprecated)) {
+    bad <- nms[already_deprecated]
+    has <- pluralise_len(bad, "has", "have")
+    abort(glue("{ bad_symbols(bad) } { has } already been deprecated"))
   }
 
-  new_args <- map(args, function(...) missing_arg())
-  fn_fmls(.fn) <- c(formals, new_args)
+  replacements <- map_chr(args, as_string)
 
-  depr_exprs <- map2(nms, args_chr, deprecated_arg_expr, .name, .cycle)
+  .fn <- add_deprecated_formals(.fn, replacements)
+
+  depr_exprs <- map2(nms, replacements, deprecated_arg_expr, .name, .cycle)
   fn_body(.fn) <- expr({
     !!! depr_exprs
 
@@ -83,12 +81,29 @@ deprecate_arguments <- function(.fn, .name, .cycle, ..., .msg = NULL) {
   })
 
   .cycle <- new_cycle_chr(.cycle)
-  deprecated_args <- map(set_names(args_chr, nms), deprecated_arg, cycle = .cycle)
+  deprecated_args <- map(set_names(replacements, nms), deprecated_arg, cycle = .cycle)
   deprecated_args <- c(deprecated_args(.fn), deprecated_args)
   .fn <- set_attrs(.fn, deprecated_args = deprecated_args)
 
   .fn
 }
+add_deprecated_formals <- function(fn, replacements) {
+  formals <- fn_fmls(fn)
+  formals_nms <- names(formals)
+  if (!all(replacements %in% c(formals_nms, ""))) {
+    abort("Can't find replacement in function arguments")
+  }
+
+  nms <- names(replacements)
+  existing <- nms %in% formals_nms
+
+  new_args <- set_names(nms[!existing])
+  new_args <- map(new_args, function(...) missing_arg())
+  fn_fmls(fn) <- c(formals, new_args)
+
+  fn
+}
+
 deprecated_arg_expr <- function(old, new, name, cycle, body) {
   old_sym <- sym(old)
   new_sym <- sym(new)
