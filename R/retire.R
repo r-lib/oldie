@@ -20,10 +20,12 @@
 #'
 #' - **Soft-deprecated**: This is the first stage of deprecation. The
 #'   function or argument continues to work normally without any
-#'   warning. Sometimes a soft-deprecated function is meant to stay
-#'   that way forever. That means that its use is now discouraged by
-#'   the author even though the function will not be removed from the
-#'   package.
+#'   warning. Soft-deprecated functions will generally not be documented, and
+#'   should not be used in examples or package code. They are left
+#'   around so that existing code continues to work, but new code
+#'   should not use them.
+#'
+#'   To make soft-deprecated functions signal an error, see below.
 #'
 #' - **Deprecated**: The function or argument now issues a warning
 #'   when used or supplied. Users should upgrade their code to use the
@@ -68,7 +70,9 @@
 #'   replacement.
 #'
 #' * If a single unnamed replacement is supplied, the function is
-#'   deprecated with the replacement.
+#'   deprecated with the replacement. If the replacement function
+#'   lives in another package, indicate it with a namespace:
+#'   `"pkg::replacement"`.
 #'
 #' * If one or several named replacements are supplied, the function
 #'   is not deprecated. Instead, the supplied arguments are. `old =

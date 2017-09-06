@@ -21,7 +21,9 @@ See the relevant section.}
 \item If no replacement is supplied, the function is deprecated with no
 replacement.
 \item If a single unnamed replacement is supplied, the function is
-deprecated with the replacement.
+deprecated with the replacement. If the replacement function
+lives in another package, indicate it with a namespace:
+\code{"pkg::replacement"}.
 \item If one or several named replacements are supplied, the function
 is not deprecated. Instead, the supplied arguments are. \code{old = new} means that the argument \code{old} is deprecated with replacement
 \code{new}. \code{old =} means that the argument \code{old} is deprecated
@@ -50,10 +52,12 @@ There are three deprecation levels:
 \itemize{
 \item \strong{Soft-deprecated}: This is the first stage of deprecation. The
 function or argument continues to work normally without any
-warning. Sometimes a soft-deprecated function is meant to stay
-that way forever. That means that its use is now discouraged by
-the author even though the function will not be removed from the
-package.
+warning. Soft-deprecated functions will generally not be documented, and
+should not be used in examples or package code. They are left
+around so that existing code continues to work, but new code
+should not use them.
+
+To make soft-deprecated functions signal an error, see below.
 \item \strong{Deprecated}: The function or argument now issues a warning
 when used or supplied. Users should upgrade their code to use the
 suggested replacement, if any.
