@@ -25,4 +25,4 @@ Imports:
 Suggests:
     testthat
 Remotes:
-    lionel-/rlang@4ccb8d2
+    lionel-/rlang@020a6e5
