@@ -1,6 +1,6 @@
 # oldie
 
-[![Build Status](https://travis-ci.org/lionel-/oldie.svg?branch=master)](https://travis-ci.org/tidyverse/oldie)
+[![Build Status](https://travis-ci.org/r-lib/oldie.svg?branch=master)](https://travis-ci.org/tidyverse/oldie)
 
 
 ## Overview

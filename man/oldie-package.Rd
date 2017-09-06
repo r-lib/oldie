@@ -13,8 +13,8 @@ cycle.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/lionel-/oldie}
-  \item Report bugs at \url{https://github.com/lionel-/oldie/issues}
+  \item \url{https://github.com/r-lib/oldie}
+  \item Report bugs at \url{https://github.com/r-lib/oldie/issues}
 }
 
 }
