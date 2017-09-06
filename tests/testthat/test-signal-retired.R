@@ -6,7 +6,7 @@ soft_deprecated_cycle <- c(past_ver, "", "")
 deprecated_cycle <- c("", past_ver, "")
 defunct_cycle <- c("", "", past_ver)
 
-if (is_true(peek_option("oldie_verbose_deprecation"))) {
+if (is_true(peek_option("oldie_verbose_retirement"))) {
   abort("Verbose deprecation should be disabled")
 }
 
@@ -46,7 +46,7 @@ test_that("deprecated function signals itself defunct", {
 })
 
 test_that("deprecation stages are promoted", {
-  scoped_options(oldie_verbose_deprecation = TRUE)
+  scoped_options(oldie_verbose_retirement = TRUE)
 
   oldie <- retire(rlang_fn, deprecated_cycle)
   expect_error(oldie(), sprintf("defunct as of version %s", past_ver))
@@ -119,7 +119,7 @@ test_that("deprecated argument signals defunction", {
 })
 
 test_that("deprecated argument signals are promoted", {
-  scoped_options(oldie_verbose_deprecation = TRUE)
+  scoped_options(oldie_verbose_retirement = TRUE)
   oldie <- retire(rlang_fn, deprecated_cycle, old = )
   expect_error(oldie(old = foo),
     "Argument `old` of function `rlang_fn()` is defunct",

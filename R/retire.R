@@ -36,7 +36,7 @@
 #'
 #' These levels are defined by a deprecation cycle, see section
 #' below. You can promote the current deprecation level by setting the
-#' global option `oldie_verbose_deprecation` to `TRUE`.
+#' global option `oldie_verbose_retirement` to `TRUE`.
 #' Soft-deprecated functions then become deprecated, deprecated
 #' functions become defunct, and so on. This is useful to check
 #' whether you're relying on any soft-deprecated functions or

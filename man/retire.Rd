@@ -67,7 +67,7 @@ used or supplied.
 
 These levels are defined by a deprecation cycle, see section
 below. You can promote the current deprecation level by setting the
-global option \code{oldie_verbose_deprecation} to \code{TRUE}.
+global option \code{oldie_verbose_retirement} to \code{TRUE}.
 Soft-deprecated functions then become deprecated, deprecated
 functions become defunct, and so on. This is useful to check
 whether you're relying on any soft-deprecated functions or

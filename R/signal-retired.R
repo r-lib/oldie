@@ -82,7 +82,7 @@ deprecation_level <- function(cycle, pkg_version) {
   max(which(due_levels))
 }
 maybe_promote_deprecation <- function(level) {
-  if (level < 3 && is_true(peek_option("oldie_verbose_deprecation"))) {
+  if (level < 3 && is_true(peek_option("oldie_verbose_retirement"))) {
     level <- level + 1
   }
 
