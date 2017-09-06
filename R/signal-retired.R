@@ -123,3 +123,22 @@ deprecated_argument_msg <- function(name, argument, version, type,
 
   msg
 }
+
+#' Promote or demote retirement levels
+#'
+#' When retirement levels are promoted, soft-deprecated functions
+#' issue a warning and deprecated functions issue an error. There is
+#' no change for defunct functions.
+#'
+#' You can check whether deprecation levels are promoted by inspecting
+#' the global option `oldie_verbose_retirement`.
+#'
+#' @export
+promote_retirement <- function() {
+  poke_options(oldie_verbose_retirement = TRUE)
+}
+#' @rdname promote_retirement
+#' @export
+demote_retirement <- function() {
+  poke_options(oldie_verbose_retirement = FALSE)
+}
