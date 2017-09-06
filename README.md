@@ -1,6 +1,6 @@
 # oldie
 
-[![Build Status](https://travis-ci.org/r-lib/oldie.svg?branch=master)](https://travis-ci.org/tidyverse/oldie)
+[![Build Status](https://travis-ci.org/r-lib/oldie.svg?branch=master)](https://travis-ci.org/r-lib/oldie)
 [![Coverage status](https://codecov.io/gh/r-lib/oldie/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/oldie?branch=master)
 [![Stability](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/joethorley/stability-badges#experimental)
 
