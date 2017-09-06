@@ -23,6 +23,7 @@ Imports:
     purrr,
     rlang
 Suggests:
+    covr,
     testthat
 Remotes:
     lionel-/rlang@020a6e5
