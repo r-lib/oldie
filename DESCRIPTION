@@ -14,10 +14,15 @@ BugReports: https://github.com/lionel-/oldie/issues
 LazyData: true
 ByteCompile: true
 Encoding: UTF-8
+RoxygenNote: 6.0.1
+Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 3.1)
 Imports:
+    glue,
+    purrr,
     rlang
 Suggests:
     testthat
-RoxygenNote: 6.0.1
+Remotes:
+    lionel-/rlang@020a6e5
