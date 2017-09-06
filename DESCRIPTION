@@ -26,4 +26,4 @@ Suggests:
     covr,
     testthat
 Remotes:
-    lionel-/rlang@020a6e5
+    lionel-/rlang@7f969c6

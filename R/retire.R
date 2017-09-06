@@ -119,10 +119,11 @@ retire <- function(.fn, .cycle, ..., .msg = NULL) {
   stopifnot(is_closure(.fn))
 
   if (is_fn_replacement(...)) {
-    retire_function(.fn, nm, .cycle, ..., .msg = .msg)
+    fn <- retire_function(.fn, nm, .cycle, ..., .msg = .msg)
   } else {
-    retire_arguments(.fn, nm, .cycle, ..., .msg = .msg)
+    fn <- retire_arguments(.fn, nm, .cycle, ..., .msg = .msg)
   }
+  new_fn(fn)
 }
 is_fn_replacement <- function(...) {
   n_dots <- nargs()
