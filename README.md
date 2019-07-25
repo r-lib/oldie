@@ -2,7 +2,10 @@
 
 [![Build Status](https://travis-ci.org/r-lib/oldie.svg?branch=master)](https://travis-ci.org/r-lib/oldie)
 [![Coverage status](https://codecov.io/gh/r-lib/oldie/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/oldie?branch=master)
-[![Stability](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/joethorley/stability-badges#experimental)
+[![Stability](https://img.shields.io/badge/stability-archived-red.svg)](https://github.com/joethorley/stability-badges#archived)
+
+
+**oldie has been archived.** It is replaced by the [lifecycle package](https://lifecycle.r-lib.org).
 
 
 ## Overview
